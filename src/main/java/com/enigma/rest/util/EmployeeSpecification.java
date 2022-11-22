@@ -41,7 +41,7 @@ public class EmployeeSpecification implements Specification<Employee> {
         return null;
     }
 
-    public static EmployeeSpecification validateSpecification(String searchCriteria) throws InvalidSearchQueryException {
+    public static EmployeeSpecification validateSpecification(String searchCriteria) {
         Pattern pattern = Pattern.compile("(\\w+)(:|<|>)(\\w+)", Pattern.UNICODE_CHARACTER_CLASS);
         if (searchCriteria != null) {
             Matcher matcher = pattern.matcher(searchCriteria);

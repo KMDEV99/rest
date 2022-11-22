@@ -1,6 +1,5 @@
 package com.enigma.rest.service;
 
-import com.enigma.rest.exception.InvalidSearchQueryException;
 import com.enigma.rest.exception.StatusDoesNotExistException;
 import com.enigma.rest.exception.WrongDueDateException;
 import com.enigma.rest.model.Employee;
@@ -8,18 +7,18 @@ import com.enigma.rest.model.Task;
 import com.enigma.rest.model.TaskStatusEnum;
 import com.enigma.rest.repository.EmployeeRepository;
 import com.enigma.rest.repository.TaskRepository;
-import com.enigma.rest.util.SearchCriteria;
+import com.enigma.rest.util.SortSearchUtils;
 import com.enigma.rest.util.TaskSpecification;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 public class TaskService {
@@ -88,19 +87,18 @@ public class TaskService {
         }
     }
 
-    public ResponseEntity<List<Task>> search(String searchCriteria) {
-        Pattern pattern = Pattern.compile("(\\w+)(:|<|>)(\\w+)", Pattern.UNICODE_CHARACTER_CLASS);
-        Matcher matcher = pattern.matcher(searchCriteria);
+    public ResponseEntity<List<Task>> search(String searchCriteria, String sortCriteria) {
+        TaskSpecification taskSpecification = TaskSpecification.validateSpecification(searchCriteria);
+        Sort sortBy = SortSearchUtils.validateSortCriteria(sortCriteria);
 
-        if (!matcher.find()) {
-            throw new InvalidSearchQueryException(String.format("Proper query syntax: %s", "?q=name:Konrad"));
+        if (taskSpecification != null && sortBy != null) {
+            return new ResponseEntity<>(taskRepository.findAll(Specification.where(taskSpecification), sortBy), HttpStatus.OK);
+        } else if (taskSpecification != null) {
+            return new ResponseEntity<>(taskRepository.findAll(Specification.where(taskSpecification)), HttpStatus.OK);
+        } else if (sortBy != null) {
+            return new ResponseEntity<>(taskRepository.findAll(sortBy), HttpStatus.OK);
         }
-        TaskSpecification taskSpecification = new TaskSpecification(
-                new SearchCriteria(
-                        matcher.group(1),
-                        matcher.group(2),
-                        matcher.group(3)
-                ));
-        return new ResponseEntity<>(taskRepository.findAll(Specification.where(taskSpecification)), HttpStatus.OK);
+
+        return new ResponseEntity<>(new LinkedList<>(), HttpStatus.OK);
     }
 }

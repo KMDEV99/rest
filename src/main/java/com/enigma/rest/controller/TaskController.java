@@ -55,8 +55,10 @@ public class TaskController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Task>> search(@RequestParam(value = "q") String searchCriteria) throws InvalidSearchQueryException {
-        return taskService.search(searchCriteria);
+    public ResponseEntity<List<Task>> search(
+            @RequestParam(value = "q", required = false) String searchCriteria,
+            @RequestParam(value = "sort", required = false) String sortCriteria) {
+        return taskService.search(searchCriteria, sortCriteria);
     }
 
 }

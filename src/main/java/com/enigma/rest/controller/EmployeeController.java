@@ -38,7 +38,7 @@ public class EmployeeController {
     @GetMapping("/search")
     public ResponseEntity<List<Employee>> search(
             @RequestParam(value = "q", required = false) String searchCriteria,
-            @RequestParam(value = "sort", required = false) String sortCriteria) throws InvalidSearchQueryException {
+            @RequestParam(value = "sort", required = false) String sortCriteria) {
         return employeeService.search(searchCriteria, sortCriteria);
     }
 

@@ -1,5 +1,6 @@
 package com.enigma.rest.util;
 
+import com.enigma.rest.exception.InvalidSearchQueryException;
 import com.enigma.rest.model.Task;
 import com.enigma.rest.model.TaskStatusEnum;
 import org.springframework.data.jpa.domain.Specification;
@@ -10,6 +11,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TaskSpecification implements Specification<Task> {
 
@@ -47,6 +50,22 @@ public class TaskSpecification implements Specification<Task> {
                     return criteriaBuilder.equal(root.get(criteria.getKey()), criteria.getValue());
                 }
             }
+        return null;
+    }
+
+    public static TaskSpecification validateSpecification(String searchCriteria) {
+        Pattern pattern = Pattern.compile("(\\w+)(:|<|>)(\\w+)", Pattern.UNICODE_CHARACTER_CLASS);
+        if (searchCriteria != null) {
+            Matcher matcher = pattern.matcher(searchCriteria);
+
+            if (!matcher.find()) {
+                throw new InvalidSearchQueryException(String.format("Proper query syntax: %s", "?q=name:Konrad"));
+            }
+            return new TaskSpecification(
+                    new SearchCriteria(
+                            matcher.group(1),matcher.group(2),matcher.group(3)
+                    ));
+        }
         return null;
     }
 }

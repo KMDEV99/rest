@@ -6,9 +6,9 @@ import org.springframework.data.domain.Sort;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SortHandler {
+public class SortSearchUtils {
 
-    public static Sort validateSortCriteria(String sortCriteria) throws InvalidSearchQueryException {
+    public static Sort validateSortCriteria(String sortCriteria) {
         Pattern pattern = Pattern.compile("(\\w+)(:)(\\w+)", Pattern.UNICODE_CHARACTER_CLASS);
         Sort sortBy = null;
 
