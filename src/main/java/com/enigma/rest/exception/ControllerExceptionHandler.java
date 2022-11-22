@@ -40,7 +40,7 @@ public class ControllerExceptionHandler {
         );
     }
 
-    @ExceptionHandler(NoSuchElementException.class)
+    @ExceptionHandler({NoSuchElementException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorMessage handleNoSuchElementException(NoSuchElementException ex, WebRequest request) {
         return new ErrorMessage(

@@ -1,6 +1,5 @@
 package com.enigma.rest.controller;
 
-import com.enigma.rest.exception.InvalidSearchQueryException;
 import com.enigma.rest.model.Employee;
 import com.enigma.rest.service.EmployeeService;
 import org.springframework.http.MediaType;

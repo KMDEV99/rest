@@ -1,6 +1,5 @@
 package com.enigma.rest.service;
 
-import com.enigma.rest.exception.InvalidSearchQueryException;
 import com.enigma.rest.model.Employee;
 import com.enigma.rest.repository.EmployeeRepository;
 import com.enigma.rest.util.EmployeeSpecification;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @Log4j2
@@ -30,7 +30,11 @@ public class EmployeeService {
     }
 
     public ResponseEntity<Employee> removeEmployee(Long employeeId) {
-        employeeRepository.deleteById(employeeId);
+        try {
+            employeeRepository.deleteById(employeeId);
+        } catch (Exception e) {
+            throw new NoSuchElementException(String.format("Employee with id: `%d` does not exist", employeeId));
+        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
