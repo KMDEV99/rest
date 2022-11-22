@@ -6,6 +6,7 @@ import com.enigma.rest.model.Task;
 import com.enigma.rest.service.TaskService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -27,7 +28,10 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<Task> createTask(@RequestBody @Valid Task task) throws WrongDueDateDateException {
+    public ResponseEntity<Task> createTask(@RequestBody @Valid Task task, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            System.out.println(bindingResult);
+        }
         return taskService.createTask(task);
     }
 

@@ -34,7 +34,7 @@ public class TaskService {
         return new ResponseEntity<>(taskRepository.findAll(), HttpStatus.OK);
     }
 
-    public ResponseEntity<Task> createTask(Task task) throws WrongDueDateDateException {
+    public ResponseEntity<Task> createTask(Task task) {
         if (!task.getDueDate().isAfter(LocalDate.now())) {
             throw new WrongDueDateDateException("Due date has to be after today");
         }
