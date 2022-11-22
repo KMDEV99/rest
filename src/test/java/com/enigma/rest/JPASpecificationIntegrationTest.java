@@ -100,8 +100,4 @@ public class JPASpecificationIntegrationTest {
         assertThat(employees, contains(employee));
     }
 
-    /*
-    http://localhost:8080/tasks/search?q=title:First Task
-    http://localhost:8080/employees/search?q=name:Konrad
-     */
 }
