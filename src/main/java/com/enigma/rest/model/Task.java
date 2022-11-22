@@ -1,6 +1,5 @@
 package com.enigma.rest.model;
 
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -9,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,10 +23,15 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @NotBlank(message = "Title may not be blank")
     private String title;
+
+    @NotBlank(message = "Description may not be blank")
     private String description;
 
     @Enumerated(EnumType.STRING)
+    @NotBlank(message = "Task status may not be blank")
     private TaskStatusEnum taskStatus;
 
     @JsonFormat(pattern = "dd-MM-yyyy")

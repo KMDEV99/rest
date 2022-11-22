@@ -1,11 +1,14 @@
 package com.enigma.rest.controller;
 
 import com.enigma.rest.exception.InvalidSearchQueryException;
+import com.enigma.rest.exception.WrongDueDateDateException;
 import com.enigma.rest.model.Task;
 import com.enigma.rest.service.TaskService;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,17 +22,17 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> getTasks() {
+    public ResponseEntity<List<Task>> getTasks() {
         return taskService.getTasks();
     }
 
     @PostMapping
-    public Task createTask(@RequestBody Task task) {
+    public ResponseEntity<Task> createTask(@RequestBody @Valid Task task) throws WrongDueDateDateException {
         return taskService.createTask(task);
     }
 
     @PutMapping("/{taskId}")
-    public void editTask(@PathVariable Long taskId, @RequestBody Task updatedTask) {
+    public void editTask(@PathVariable Long taskId, @Valid @RequestBody Task updatedTask) {
         taskService.editTask(taskId, updatedTask);
     }
 
@@ -39,7 +42,7 @@ public class TaskController {
     }
 
     @PutMapping("/{taskId}/employee/{employeeId}")
-    public Task assignTask(@PathVariable Long taskId, @PathVariable Long employeeId) {
+    public ResponseEntity<Task> assignTask(@PathVariable Long taskId, @PathVariable Long employeeId) {
         return taskService.assignTask(taskId, employeeId);
     }
 
@@ -49,7 +52,7 @@ public class TaskController {
     }
 
     @GetMapping("/search")
-    public List<Task> search(@RequestParam(value = "q") String searchCriteria) throws InvalidSearchQueryException {
+    public ResponseEntity<List<Task>> search(@RequestParam(value = "q") String searchCriteria) throws InvalidSearchQueryException {
         return taskService.search(searchCriteria);
     }
 
