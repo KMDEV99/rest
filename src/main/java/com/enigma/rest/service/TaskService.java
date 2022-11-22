@@ -45,18 +45,14 @@ public class TaskService {
 
     public void editTask(Long taskId, Task updatedTask) {
         taskRepository.findById(taskId).ifPresent(task -> {
-            if (updatedTask.getTitle() != null && !updatedTask.getTitle().isBlank()) {
-                task.setTitle(updatedTask.getTitle());
+            task.setTitle(updatedTask.getTitle());
+            task.setDescription(updatedTask.getDescription());
+            task.setTaskStatus(updatedTask.getTaskStatus());
+            if (!updatedTask.getDueDate().isAfter(LocalDate.now())) {
+                throw new WrongDueDateException("Due date has to be after today");
             }
-            if (updatedTask.getDescription() != null && !updatedTask.getDescription().isBlank()) {
-                task.setDescription(updatedTask.getDescription());
-            }
-            if (updatedTask.getDueDate() != null) {
-                if (!updatedTask.getDueDate().isAfter(LocalDate.now())) {
-                    throw new WrongDueDateException("Due date has to be after today");
-                }
-                task.setDueDate(updatedTask.getDueDate());
-            }
+            task.setDueDate(updatedTask.getDueDate());
+
             taskRepository.save(task);
         });
     }

@@ -7,6 +7,8 @@ Employee Service:
 
 ```[GET] getAllEmployees: http://localhost:8080/employees```
 
+```[DELETE] deleteEmployee: http://localhost:8080/employees/1```
+
 ```
 [POST] postEmployee: http://localhost:8080/employees
 {
