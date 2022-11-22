@@ -28,7 +28,6 @@ public class Employee {
     @NotBlank(message = "Surname may not be blank")
     private String surname;
 
-    @Column(unique = true)
     @Email(message = "Incorrect email")
     private String email;
 

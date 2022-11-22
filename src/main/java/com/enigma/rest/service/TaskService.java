@@ -1,6 +1,7 @@
 package com.enigma.rest.service;
 
 import com.enigma.rest.exception.InvalidSearchQueryException;
+import com.enigma.rest.exception.StatusDoesNotExistException;
 import com.enigma.rest.exception.WrongDueDateException;
 import com.enigma.rest.model.Employee;
 import com.enigma.rest.model.Task;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,6 +37,7 @@ public class TaskService {
     }
 
     public ResponseEntity<Task> createTask(Task task) {
+
         if (!task.getDueDate().isAfter(LocalDate.now())) {
             throw new WrongDueDateException("Due date has to be after today");
         }
@@ -49,11 +52,11 @@ public class TaskService {
             if (updatedTask.getDescription() != null && !updatedTask.getDescription().isBlank()) {
                 task.setDescription(updatedTask.getDescription());
             }
-            if (updatedTask.getDueDate() != null && updatedTask.getDueDate().isAfter(LocalDate.now())) {
+            if (updatedTask.getDueDate() != null) {
+                if (!updatedTask.getDueDate().isAfter(LocalDate.now())) {
+                    throw new WrongDueDateException("Due date has to be after today");
+                }
                 task.setDueDate(updatedTask.getDueDate());
-            }
-            if (updatedTask.getTaskStatus() != null) {
-                task.setTaskStatus(updatedTask.getTaskStatus());
             }
             taskRepository.save(task);
         });
@@ -71,14 +74,21 @@ public class TaskService {
     }
 
     public void updateTaskStatus(Long taskId, String taskStatus) {
-        Task task = taskRepository.findById(taskId).orElseThrow();
+        Task task = taskRepository.findById(taskId).orElseThrow(
+                () -> {throw new NoSuchElementException(String.format("Task with id: `%d` not found", taskId));}
+        );
+
         if (!task.getTaskStatus().toString().equalsIgnoreCase(taskStatus)) {
-            task.setTaskStatus(TaskStatusEnum.valueOf(taskStatus.toUpperCase()));
+            try {
+                task.setTaskStatus(TaskStatusEnum.valueOf(taskStatus.toUpperCase()));
+            } catch (IllegalArgumentException ex) {
+                throw new StatusDoesNotExistException(String.format("`%s`", "does not exist"));
+            }
             taskRepository.save(task);
         }
     }
 
-    public ResponseEntity<List<Task>> search(String searchCriteria) throws InvalidSearchQueryException {
+    public ResponseEntity<List<Task>> search(String searchCriteria) {
         Pattern pattern = Pattern.compile("(\\w+)(:|<|>)(\\w+)", Pattern.UNICODE_CHARACTER_CLASS);
         Matcher matcher = pattern.matcher(searchCriteria);
 

@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 public class SortHandler {
 
     public static Sort validateSortCriteria(String sortCriteria) throws InvalidSearchQueryException {
-        Pattern pattern = Pattern.compile("(\\w+)(:|<|>)(\\w+)", Pattern.UNICODE_CHARACTER_CLASS);
+        Pattern pattern = Pattern.compile("(\\w+)(:)(\\w+)", Pattern.UNICODE_CHARACTER_CLASS);
         Sort sortBy = null;
 
         if (sortCriteria != null) {
