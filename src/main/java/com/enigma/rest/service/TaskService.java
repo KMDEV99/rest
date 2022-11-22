@@ -1,7 +1,7 @@
 package com.enigma.rest.service;
 
 import com.enigma.rest.exception.InvalidSearchQueryException;
-import com.enigma.rest.exception.WrongDueDateDateException;
+import com.enigma.rest.exception.WrongDueDateException;
 import com.enigma.rest.model.Employee;
 import com.enigma.rest.model.Task;
 import com.enigma.rest.model.TaskStatusEnum;
@@ -36,7 +36,7 @@ public class TaskService {
 
     public ResponseEntity<Task> createTask(Task task) {
         if (!task.getDueDate().isAfter(LocalDate.now())) {
-            throw new WrongDueDateDateException("Due date has to be after today");
+            throw new WrongDueDateException("Due date has to be after today");
         }
         return new ResponseEntity<>(taskRepository.save(task), HttpStatus.OK);
     }

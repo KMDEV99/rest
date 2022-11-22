@@ -1,7 +1,6 @@
 package com.enigma.rest.controller;
 
 import com.enigma.rest.exception.InvalidSearchQueryException;
-import com.enigma.rest.exception.WrongDueDateDateException;
 import com.enigma.rest.model.Task;
 import com.enigma.rest.service.TaskService;
 import org.springframework.http.MediaType;

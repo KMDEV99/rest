@@ -4,8 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-public class WrongDueDateDateException extends RuntimeException {
-    public WrongDueDateDateException(String message) {
+public class WrongDueDateException extends RuntimeException {
+    public WrongDueDateException(String message) {
         super(message);
     }
 
