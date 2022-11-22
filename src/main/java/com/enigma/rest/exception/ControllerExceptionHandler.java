@@ -6,9 +6,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.validation.Constraint;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class ControllerExceptionHandler {
@@ -27,12 +29,14 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorMessage handleConstraintViolationError(ConstraintViolation ex, WebRequest request) {
+    public ErrorMessage handleConstraintViolationError(ConstraintViolationException ex, WebRequest request) {
 
         return new ErrorMessage(
                 HttpStatus.BAD_REQUEST.value(),
                 new Date(),
-                ex.getMessage(),
+                ex.getConstraintViolations().stream().
+                        map(ConstraintViolation::getMessage).
+                        collect(Collectors.joining(",\n")),
                 request.getDescription(false)
         );
     }
