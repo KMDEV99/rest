@@ -9,6 +9,7 @@ import com.enigma.rest.repository.EmployeeRepository;
 import com.enigma.rest.repository.TaskRepository;
 import com.enigma.rest.util.SortSearchUtils;
 import com.enigma.rest.util.TaskSpecification;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
+@Log4j2
 public class TaskService {
 
     private final TaskRepository taskRepository;
@@ -39,6 +41,7 @@ public class TaskService {
         if (!task.getDueDate().isAfter(LocalDate.now())) {
             throw new WrongDueDateException("Due date has to be after today");
         }
+        log.info("Creating task: " + task);
         return new ResponseEntity<>(taskRepository.save(task), HttpStatus.OK);
     }
 
@@ -60,10 +63,12 @@ public class TaskService {
         Task task = taskRepository.findById(taskId).orElseThrow();
         Employee employee = employeeRepository.findById(employeeId).orElseThrow();
         task.assignEmployee(employee);
+        log.info(String.format("Assigning task with id `%d` to user with id `%d`", taskId, employeeId));
         return new ResponseEntity<>(taskRepository.save(task), HttpStatus.OK);
     }
 
     public void deleteTask(Long taskId) {
+        log.info(String.format("Deleting task with id `%d`", taskId));
         taskRepository.deleteById(taskId);
     }
 

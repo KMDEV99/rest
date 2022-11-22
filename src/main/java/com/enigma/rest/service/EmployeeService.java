@@ -25,6 +25,7 @@ public class EmployeeService {
     }
 
     public ResponseEntity<Employee> createEmployee(Employee employee) {
+        log.info("Creating employee" + employee.toString());
         return new ResponseEntity<>(employeeRepository.save(employee), HttpStatus.CREATED);
     }
 
@@ -34,6 +35,7 @@ public class EmployeeService {
         } catch (Exception e) {
             throw new NoSuchElementException(String.format("Employee with id: `%d` does not exist", employeeId));
         }
+        log.info(String.format("Removed employee with id: `%d`", employeeId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
