@@ -5,7 +5,9 @@ import com.enigma.rest.model.Employee;
 import com.enigma.rest.repository.EmployeeRepository;
 import com.enigma.rest.util.EmployeeSpecification;
 import com.enigma.rest.util.SearchCriteria;
+import com.enigma.rest.util.SortHandler;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,18 +40,21 @@ public class EmployeeService {
         return new ResponseEntity<>(employeeRepository.findAll(), HttpStatus.OK);
     }
 
-    public List<Employee> search(String searchCriteria) throws InvalidSearchQueryException {
-        Pattern pattern = Pattern.compile("(\\w+)(:|<|>)(\\w+)", Pattern.UNICODE_CHARACTER_CLASS);
-        Matcher matcher = pattern.matcher(searchCriteria);
+    public List<Employee> search(String searchCriteria, String sortCriteria) throws InvalidSearchQueryException {
+            EmployeeSpecification employeeSpecification = EmployeeSpecification.validateSpecification(searchCriteria);
+            Sort sortBy = SortHandler.validateSortCriteria(sortCriteria);
+            
+            List<Employee> employees = null;
 
-        if (!matcher.find()) {
-            throw new InvalidSearchQueryException(String.format("Proper query syntax: %s", "?q=name:Konrad"));
+            if (employeeSpecification != null && sortBy != null) {
+                employees = employeeRepository.findAll(Specification.where(employeeSpecification), sortBy);
+            } else if (employeeSpecification != null) {
+                employees = employeeRepository.findAll(Specification.where(employeeSpecification));
+            } else if (sortBy != null) {
+                employees = employeeRepository.findAll(sortBy);
+            }
+
+            return employees;
         }
-        EmployeeSpecification employeeSpecification = new EmployeeSpecification(
-                new SearchCriteria(
-                        "name",":","Konrad"
-                ));
-            return employeeRepository.findAll(Specification.where(employeeSpecification));
-    }
 
 }

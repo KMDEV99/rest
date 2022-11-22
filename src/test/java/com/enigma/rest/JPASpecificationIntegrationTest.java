@@ -1,9 +1,12 @@
 package com.enigma.rest;
 
+import com.enigma.rest.model.Employee;
 import com.enigma.rest.model.Task;
 import com.enigma.rest.model.TaskStatusEnum;
+import com.enigma.rest.repository.EmployeeRepository;
 import com.enigma.rest.repository.TaskRepository;
 
+import com.enigma.rest.util.EmployeeSpecification;
 import com.enigma.rest.util.SearchCriteria;
 import com.enigma.rest.util.TaskSpecification;
 import lombok.extern.log4j.Log4j2;
@@ -33,8 +36,13 @@ public class JPASpecificationIntegrationTest {
     @Autowired
     private TaskRepository taskRepository;
 
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
     private Task task1;
     private Task task2;
+
+    private Employee employee;
 
     @Before
     public void init() {
@@ -54,6 +62,13 @@ public class JPASpecificationIntegrationTest {
 
         log.info("Adding task: " + taskRepository.save(task1));
         log.info("Adding task: " + taskRepository.save(task2));
+
+        employee = new Employee();
+        employee.setName("Konrad");
+        employee.setSurname("Matuszewski");
+        employee.setEmail("matkonrad99@gmail.com");
+
+        log.info("Adding employee: " + employeeRepository.save(employee));
     }
 
     @Test
@@ -68,7 +83,7 @@ public class JPASpecificationIntegrationTest {
     }
 
     @Test
-    public void given_title_whenGettingListOfTasks_thenIncorrect() {
+    public void givenTitle_whenGettingListOfTasks_thenIncorrect() {
         TaskSpecification specificationName = new TaskSpecification(new SearchCriteria("title", ":", "Third Task"));
 
         List<Task> tasks = taskRepository.findAll(Specification.where(specificationName));
@@ -76,4 +91,17 @@ public class JPASpecificationIntegrationTest {
         assertThat(tasks, not(contains(task1)));
     }
 
+    @Test
+    public void givenName_whenGettingListOfEmployees_thenCorrect() {
+        EmployeeSpecification employeeSpecification = new EmployeeSpecification(new SearchCriteria("name", ";", "Konrad"));
+
+        List<Employee> employees = employeeRepository.findAll(employeeSpecification);
+
+        assertThat(employees, contains(employee));
+    }
+
+    /*
+    http://localhost:8080/tasks/search?q=title:First Task
+    http://localhost:8080/employees/search?q=name:Konrad
+     */
 }
