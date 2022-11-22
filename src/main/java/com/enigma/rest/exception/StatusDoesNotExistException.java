@@ -1,7 +1,10 @@
 package com.enigma.rest.exception;
 
-public class StatusDoesNotExistException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class StatusDoesNotExistException extends RuntimeException {
     public StatusDoesNotExistException(String message) {
         super(message);
     }
