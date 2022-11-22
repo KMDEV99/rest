@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -46,15 +45,8 @@ public class EmployeeService {
         EmployeeSpecification employeeSpecification = EmployeeSpecification.validateSpecification(searchCriteria);
         Sort sortBy = SortSearchUtils.validateSortCriteria(sortCriteria);
 
-        if (employeeSpecification != null && sortBy != null) {
-            return new ResponseEntity<>(employeeRepository.findAll(Specification.where(employeeSpecification), sortBy), HttpStatus.OK);
-        } else if (employeeSpecification != null) {
-            return new ResponseEntity<>(employeeRepository.findAll(Specification.where(employeeSpecification)), HttpStatus.OK);
-        } else if (sortBy != null) {
-            return new ResponseEntity<>(employeeRepository.findAll(sortBy), HttpStatus.OK);
-        }
-
-        return new ResponseEntity<>(new LinkedList<>(), HttpStatus.OK);
+        return new ResponseEntity<>(employeeRepository.findAll(Specification.where(employeeSpecification),
+                sortBy != null ? sortBy : Sort.by(Sort.Direction.ASC, "id")), HttpStatus.OK);
     }
 
 }

@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -87,14 +86,7 @@ public class TaskService {
         TaskSpecification taskSpecification = TaskSpecification.validateSpecification(searchCriteria);
         Sort sortBy = SortSearchUtils.validateSortCriteria(sortCriteria);
 
-        if (taskSpecification != null && sortBy != null) {
-            return new ResponseEntity<>(taskRepository.findAll(Specification.where(taskSpecification), sortBy), HttpStatus.OK);
-        } else if (taskSpecification != null) {
-            return new ResponseEntity<>(taskRepository.findAll(Specification.where(taskSpecification)), HttpStatus.OK);
-        } else if (sortBy != null) {
-            return new ResponseEntity<>(taskRepository.findAll(sortBy), HttpStatus.OK);
-        }
-
-        return new ResponseEntity<>(new LinkedList<>(), HttpStatus.OK);
+        return new ResponseEntity<>(taskRepository.findAll(Specification.where(taskSpecification),
+                sortBy != null ? sortBy : Sort.by(Sort.Direction.ASC, "id")), HttpStatus.OK);
     }
 }
